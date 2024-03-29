@@ -28,7 +28,8 @@ class SocketService extends GetxService {
       printInfo(info: 'Socket disconnected');
       Get.offNamed(Routes.HOME);
     });
-    _socket.onConnectError((data) => printInfo(info: 'Socket connection error'));
+    _socket
+        .onConnectError((data) => printInfo(info: 'Socket connection error'));
 
     _socket.onAny((event, data) {
       var isKnown = SocketEvent.values.any((element) => element.name == event);
@@ -37,25 +38,6 @@ class SocketService extends GetxService {
       var message = ChatMessage.fromJson(data);
       UserService.to.addMessageToList(message);
     });
-
-    //SocketEvent.newMessage.name == newmessage приведение к строке
-    // _socket.on(SocketEvent.newMessage.name, (data) {
-    //   data['type'] = SocketEvent.newMessage.name;
-    //   var message = ChatMessage.fromJson(data);
-    //   UserService.to.addMessageToList(message);
-    // });
-
-    // _socket.on(SocketEvent.login.name, (data) {
-    //   data['type'] = SocketEvent.login.name;
-    //   var message = ChatMessage.fromJson(data);
-    //   UserService.to.addMessageToList(message);
-    // });
-
-    // _socket.on(SocketEvent.logout.name, (data) {
-    //   data['type'] = SocketEvent.logout.name;
-    //   var message = ChatMessage.fromJson(data);
-    //   UserService.to.addMessageToList(message);
-    // });
 
     return this;
   }
@@ -66,8 +48,9 @@ class SocketService extends GetxService {
     _socket.connect();
   }
 
-  void disconnect() {
+  void disconnect() async {
     _sendLogoutMessage();
+    await Future.delayed(const Duration(seconds: 1));
     _socket.disconnect();
   }
 
@@ -76,7 +59,7 @@ class SocketService extends GetxService {
   }
 
   void _sendLogoutMessage() {
-    _socket.emit(SocketEvent.logout.name, UserService.to.username);
+    _socket.emit(SocketEvent.logout.name);
   }
 
   void sendMessageToChat(String message) {

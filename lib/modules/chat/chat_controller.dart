@@ -15,10 +15,18 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     messages.listen((p0) async {
-      var max = scrollCntrl.position.maxScrollExtent;
-      if (scrollCntrl.offset + 100 >= max) {
-        await Future.delayed(const Duration(microseconds: 300));
-        scrollCntrl.jumpTo(max);
+      if (scrollCntrl.hasClients) {
+        var max = scrollCntrl.position.maxScrollExtent;
+        if (scrollCntrl.offset + 100 >= max) {
+          await Future.delayed(
+              const Duration(
+                milliseconds: 100,
+              ), () {
+            if (scrollCntrl.hasClients) {
+              scrollCntrl.jumpTo(scrollCntrl.position.maxScrollExtent);
+            }
+          });
+        }
       }
     });
     super.onInit();
@@ -32,5 +40,14 @@ class ChatController extends GetxController {
 
   bool itsMe(String clientId) => clientId == SocketService.to.clientId;
 
-  disconnect() => SocketService.to.disconnect();
+  disconnect() {
+    messages.clear();
+    SocketService.to.disconnect();
+  }
+
+  @override
+  void onClose() {
+    scrollCntrl.dispose(); // Dispose - надо вызывать для контроллеров, которые могут управлять состоянием
+    super.onClose();
+  }
 }
