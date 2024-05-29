@@ -28,8 +28,7 @@ class SocketService extends GetxService {
       printInfo(info: 'Socket disconnected');
       Get.offNamed(Routes.HOME);
     });
-    _socket
-        .onConnectError((data) => printInfo(info: 'Socket connection error'));
+    _socket.onConnectError((data) => printInfo(info: 'Socket connection error'));
 
     _socket.onAny((event, data) {
       var isKnown = SocketEvent.values.any((element) => element.name == event);
@@ -38,7 +37,6 @@ class SocketService extends GetxService {
       var message = ChatMessage.fromJson(data);
       UserService.to.addMessageToList(message);
     });
-
     return this;
   }
 
@@ -50,7 +48,7 @@ class SocketService extends GetxService {
 
   void disconnect() async {
     _sendLogoutMessage();
-    await Future.delayed(const Duration(seconds: 1));
+    //await Future.delayed(const Duration(seconds: 1));
     _socket.disconnect();
   }
 

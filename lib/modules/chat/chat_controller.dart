@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socket/data/models/chat_message/chat_message.dart';
@@ -18,10 +16,7 @@ class ChatController extends GetxController {
       if (scrollCntrl.hasClients) {
         var max = scrollCntrl.position.maxScrollExtent;
         if (scrollCntrl.offset + 100 >= max) {
-          await Future.delayed(
-              const Duration(
-                milliseconds: 100,
-              ), () {
+          await Future.delayed(const Duration(milliseconds: 100), () {
             if (scrollCntrl.hasClients) {
               scrollCntrl.jumpTo(scrollCntrl.position.maxScrollExtent);
             }
